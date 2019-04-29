@@ -56,14 +56,11 @@ def create_or_update_contributor(contribution_object):
         "zip" : contribution_object['zip'],
         "zip_number": zip_number_parser(contribution_object['zip']),
     }
-    contributor, created = Contributor.objects.update_or_create(defaults={"date_created": timezone.now()}, **contibutor_object)
-    if created:
-        contributor.save()
+    contributor = Contributor.objects.update_or_create(defaults={"date_created": timezone.now()}, **contibutor_object)
     return contributor
 
 def create_or_update_contribution(contribution_object, candidate, contributor):
     date_of_contribution = datetime.datetime.strptime(contribution_object['date'], '%m/%d/%Y').date()
-    print(type(candidate))
     contribution = {
         "type": contribution_object['type'],
         "date": date_of_contribution,
@@ -84,9 +81,7 @@ def create_or_update_contribution(contribution_object, candidate, contributor):
         "zip" : contribution_object['zip'],
         "zip_number": zip_number_parser(contribution_object['zip']),
     }
-    contribution, created = Contribution.objects.update_or_create(defaults={"date_created": timezone.now()},candidate=candidate, contributor=contributor, **contribution)
-    if created:
-        contribution.save()
+    contribution = Contribution.objects.update_or_create(defaults={"date_created": timezone.now()},candidate=candidate, contributor=contributor, **contribution)
     return contribution
 
 
@@ -99,7 +94,6 @@ def map_list_to_object(line):
     mapped_object = {}
     for i, field in enumerate(row_tuple):
         mapped_object[field] = line[i].strip()
-    print(mapped_object)
     return mapped_object
 
 def import_voter_focus_election_donations():
@@ -110,10 +104,10 @@ def import_voter_focus_election_donations():
             'cand_name':'',
     'cand_fname':'',
     'cand_id':'',
-    'b_month': 8,
+    'b_month': 1,
     'b_day': 1,
     'b_year': 2018,
-    'e_month': 12,
+    'e_month': 8,
     'e_day': 1,
     'e_year': 2018,
     's_min':'',
@@ -139,19 +133,27 @@ def import_voter_focus_election_donations():
             next(reader)
             counter = 0
             all_candidates = []
+            all_contributors = []
             all_contributions = []
+            # could move this whole thing to a single transaction to improve performance
             for line in reader:
                 counter += 1
                 contribution_object = map_list_to_object(line)
                 candidate = create_or_update_candidate(contribution_object['candidate'])
+                all_candidates.append(candidate)
                 contributor = create_or_update_contributor(contribution_object)
+                all_contributors.append(contributor)
                 contributon = create_or_update_contribution(contribution_object, candidate, contributor)
+                all_contributions.append(contributon)
                 print(counter)
             # next(reader)
             # for line in reader:
             #     print(line)
             #     # candidate = create_or_update_candidate(line[2])
             #     # contributor = create_or_update_contributor(line)
+            Candidate.objects.bulk_create(all_candidates)
+            Contributor.objects.bulk_create(all_contributors)
+            Contribution.objects.bulk_create(all_contributions)
             print('all done')
     else:
         print('some kind of error as occured')

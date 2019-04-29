@@ -1,0 +1,20 @@
+{% extends "contributions/base.html" %}
+
+{% block content %}
+<div class="row">
+  <div class="col-md-6 offset-md-3">
+    {% block inner %}
+    <h2>YOY spending by </h2>
+    <div>
+        <ul>
+            {% for line in candidate_total_contributions %}
+            <li>
+                {{line.candidate__name}} | {{line.amount}} | {{line.candidate}}
+            </li>
+            {% endfor %}
+        </ul>
+    </div>
+    {% endblock %}
+  </div>
+</div>
+{% endblock %}

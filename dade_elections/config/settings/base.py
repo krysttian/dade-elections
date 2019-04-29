@@ -69,6 +69,11 @@ THIRD_PARTY_APPS = [
     "allauth.socialaccount",
     "rest_framework",
 ]
+REST_FRAMEWORK = {
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
+    'PAGE_SIZE': 1000
+}
+
 LOCAL_APPS = [
     "dade_elections.users.apps.UsersAppConfig",
     # Your stuff: custom apps go here

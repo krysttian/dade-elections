@@ -1,0 +1,20 @@
+{% extends "contributions/base.html" %}
+
+{% block content %}
+<div class="row">
+  <div class="col-md-6 offset-md-3">
+    {% block inner %}
+    <h2>YOY contribution Count by zip code </h2>
+    <div>
+      <ul>
+        {% for zip in zip_codes %}
+        <li>
+            {{zip.zip_number}} | {{zip.count}} | {{zip.sum}}
+        </li>
+        {% endfor %}
+      </ul>
+    </div>
+    {% endblock %}
+  </div>
+</div>
+{% endblock %}

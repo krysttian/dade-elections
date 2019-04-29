@@ -4,7 +4,7 @@ class Candidate(models.Model):
     name = models.CharField(max_length=100)
     date_created = models.DateTimeField()
     candidate_number = models.IntegerField(primary_key=True, unique=True)
-    def __str__(self):
+    def __unicode__(self):
         return self.name
 
 class Contributor(models.Model):
@@ -20,7 +20,7 @@ class Contributor(models.Model):
     zip = models.CharField(max_length=100)
     zip_number = models.IntegerField()
     date_created = models.DateTimeField()
-    def __str__(self):
+    def __unicode__(self):
         return self.id
 
 class Contribution(models.Model):
@@ -44,5 +44,5 @@ class Contribution(models.Model):
     contribution_type=models.CharField(max_length=100)
     amend=models.CharField(max_length=100, null=True)
     date_created=models.DateTimeField()
-    def __str__(self):
+    def __unicode__(self):
         return self.contributor
